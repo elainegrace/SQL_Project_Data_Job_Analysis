@@ -5,38 +5,28 @@ What are the top-paying data analyst jobs?
     - Include company names
 */
 
-WITH top_paying_remote_jobs AS
 
-    (SELECT
-        job_id,
-        company_id,
-        job_title,
-        job_location,
-        job_schedule_type,
-        salary_year_avg,
-        job_posted_date::DATE
-
-    FROM
-        job_postings_fact
-
-    WHERE 
-        job_title_short LIKE '%Data%Analyst%' AND
-        job_location = 'Anywhere' AND
-        salary_year_avg IS NOT NULL
-
-    ORDER BY
-        salary_year_avg DESC
-    
-    LIMIT 10)
-
-
-SELECT 
+SELECT
+    job_id,
     job_title,
     job_location,
     job_schedule_type,
     salary_year_avg,
-    name
-FROM top_paying_remote_jobs
+    job_posted_date,
+    name as company_name
+
+FROM job_postings_fact
+
 LEFT JOIN company_dim ON
-    company_dim.company_id = top_paying_remote_jobs.company_id
+    company_dim.company_id = job_postings_fact.company_id
+
+WHERE 
+    job_location = 'Anywhere' AND
+    job_title_short = 'Data Analyst' AND
+    salary_year_avg IS NOT NULL
+
+ORDER BY salary_year_avg DESC
+
+LIMIT 10
+
 
